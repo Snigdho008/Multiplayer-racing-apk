@@ -154,12 +154,12 @@ body, html {
 /* Round Dial */
 .tacho-dial {
     position: relative;
-    width: 84px;
-    height: 84px;
+    width: 86px;
+    height: 86px;
     border-radius: 50%;
-    background: radial-gradient(circle, #1a2230 40%, #0d121c 100%);
-    border: 3px solid #f59e0b;
-    box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
+    background: radial-gradient(circle, rgba(24, 28, 36, 0.95) 40%, rgba(8, 10, 16, 0.98) 100%);
+    border: 3px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.25), inset 0 0 14px rgba(0, 0, 0, 0.8);
 }
 
 #tacho-needle {
@@ -193,17 +193,19 @@ body, html {
 }
 
 #gear-value {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 900;
-    color: #f59e0b;
+    color: #ffffff;
     line-height: 1;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
 .tacho-center small {
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 800;
-    color: #94a3b8;
+    color: #cbd5e1;
     letter-spacing: 0.5px;
+    text-transform: lowercase;
 }
 
 #shift-light {
