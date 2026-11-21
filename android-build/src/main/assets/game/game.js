@@ -1575,23 +1575,18 @@
     function addTapListener(idOrEl, handler) {
         const el = typeof idOrEl === 'string' ? document.getElementById(idOrEl) : idOrEl;
         if (!el) return;
-        let handled = false;
-        el.addEventListener('touchend', e => {
-            e.preventDefault();
-            handled = true;
+        let lastTime = 0;
+        const trigger = function(e) {
+            const now = performance.now();
+            if (now - lastTime < 280) return;
+            lastTime = now;
             if (audioCtx && audioCtx.state === 'suspended') {
                 try { audioCtx.resume(); } catch(err){}
             }
             handler(e);
-            setTimeout(() => { handled = false; }, 300);
-        }, { passive: false });
-        el.addEventListener('click', e => {
-            if (handled) return;
-            if (audioCtx && audioCtx.state === 'suspended') {
-                try { audioCtx.resume(); } catch(err){}
-            }
-            handler(e);
-        });
+        };
+        el.onclick = trigger;
+        el.addEventListener('touchend', trigger, { passive: true });
     }
 
     function setupMenuUI() {
@@ -1606,9 +1601,20 @@
         const ipEl = document.getElementById('lan-my-ip');
         if (ipEl) ipEl.textContent = localIp;
 
-        addTapListener('btn-select-lan',    () => { pendingMode = 'LAN';    showView(viewMode, viewTrack); });
-        addTapListener('btn-select-online', () => { pendingMode = 'ONLINE'; showView(viewMode, viewTrack); });
-        addTapListener('btn-select-solo',   () => { pendingMode = 'SOLO';   showView(viewMode, viewTrack); });
+        // Instant Quick Race - 1-tap start
+        addTapListener('btn-quick-race', () => {
+            startSoloPractice();
+        });
+
+        // Track & Car selector
+        addTapListener('btn-select-track', () => {
+            pendingMode = 'SOLO';
+            showView(viewMode, viewTrack);
+        });
+
+        // Multiplayer modes
+        addTapListener('btn-select-lan',    () => { pendingMode = 'LAN';    showView(viewMode, viewLan); });
+        addTapListener('btn-select-online', () => { pendingMode = 'ONLINE'; showView(viewMode, viewOnline); });
 
         // Track Card Click
         document.querySelectorAll('.track-card').forEach(card => {
@@ -1619,17 +1625,11 @@
             });
         });
 
-        // Confirm Track
+        // Launch race directly from track select
         addTapListener('btn-track-confirm', () => {
             buildTrackEnvironment(selectedTrackId);
             initCarsForLobby(4);
-            if (pendingMode === 'LAN') {
-                showView(viewTrack, viewLan);
-            } else if (pendingMode === 'ONLINE') {
-                showView(viewTrack, viewOnline);
-            } else {
-                startSoloPractice();
-            }
+            launchRace();
         });
 
         addTapListener('btn-track-back',  () => showView(viewTrack, viewMode));

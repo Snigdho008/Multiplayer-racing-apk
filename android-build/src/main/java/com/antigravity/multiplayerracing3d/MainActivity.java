@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         webView.setWebViewClient(new WebViewClient());
+        webView.setWebChromeClient(new android.webkit.WebChromeClient());
         webView.addJavascriptInterface(new AndroidBridge(), "AndroidNative");
 
         setContentView(webView);

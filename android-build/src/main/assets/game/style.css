@@ -464,6 +464,13 @@ body, html {
     transform: scale(0.98);
 }
 
+.quick-race-btn {
+    background: linear-gradient(90deg, #f59e0b, #d97706) !important;
+    color: #fff !important;
+    border: 2px solid #fbbf24 !important;
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.5) !important;
+}
+
 .primary-btn {
     background: linear-gradient(90deg, #0284c7, #2563eb);
     color: #fff;
