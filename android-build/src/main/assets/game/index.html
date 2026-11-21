@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Multiplayer 3D Racing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container"></div>
+    <!-- High-speed motion blur lines canvas & radar flash overlay -->
+    <canvas id="speed-lines-canvas"></canvas>
+    <div id="radar-flash-overlay"></div>
+
+    <!-- UI Overlay: HUD & Menus -->
+    <div id="ui-layer">
+        <!-- TOP HUD -->
+        <div id="hud-top" class="hud-panel hidden">
+            <div class="hud-card" id="pos-card">
+                <span class="hud-label">POSITION</span>
+                <span class="hud-value highlight" id="hud-position">1<small>/4</small></span>
+            </div>
+            <div class="hud-card" id="lap-card">
+                <span class="hud-label">LAP</span>
+                <span class="hud-value" id="hud-lap">1<small>/3</small></span>
+            </div>
+            <div class="hud-card" id="time-card">
+                <span class="hud-label">TIME</span>
+                <span class="hud-value" id="hud-time">00:00.00</span>
+            </div>
+            <button id="btn-cam" class="hud-icon-btn">🎥 CAM</button>
+        </div>
+
+        <!-- NEED FOR SPEED MOST WANTED TACHOMETER & SPEED GAUGE -->
+        <div id="hud-speedometer" class="hud-panel hidden">
+            <div class="nfs-tacho-wrap">
+                <!-- Circular RPM Dial -->
+                <div class="tacho-dial">
+                    <div id="tacho-needle"></div>
+                    <div class="tacho-center">
+                        <span id="gear-value">1</span>
+                        <small>GEAR</small>
+                    </div>
+                    <div id="shift-light"></div>
+                </div>
+                <!-- Speed & NOS readout -->
+                <div class="speed-nos-block">
+                    <div class="speed-readout">
+                        <span id="speed-value">0</span>
+                        <span class="speed-unit">KM/H</span>
+                    </div>
+                    <div class="nfs-nitro-wrap">
+                        <span class="nos-label">NOS</span>
+                        <div class="nos-tank-container">
+                            <div id="nitro-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COUNTDOWN -->
+        <div id="countdown-banner" class="hidden">
+            <h1 id="countdown-text">3</h1>
+        </div>
+
+        <!-- TOUCH CONTROLS -->
+        <div id="touch-controls" class="hidden">
+            <div class="control-cluster left-cluster">
+                <button id="btn-steer-left" class="touch-btn steer-btn">◀</button>
+                <button id="btn-steer-right" class="touch-btn steer-btn">▶</button>
+            </div>
+            <div class="control-cluster right-cluster">
+                <button id="btn-nitro" class="touch-btn action-btn nitro-btn">⚡ NOS</button>
+                <button id="btn-brake" class="touch-btn action-btn brake-btn">BRAKE</button>
+                <button id="btn-gas" class="touch-btn action-btn gas-btn">GAS</button>
+            </div>
+        </div>
+
+        <!-- MAIN MENU -->
+        <div id="menu-screen" class="menu-overlay">
+            <div class="menu-card">
+                <div class="title-container">
+                    <div class="badge" style="background:#f59e0b;color:#000;font-weight:900;">MOST WANTED EDITION</div>
+                    <h1 class="game-title">APEX <span>MOST WANTED</span></h1>
+                    <p class="subtitle">Underground Street Racing • Tuned Supercars</p>
+                </div>
+
+                <!-- Step 0: Track Select (inserted between mode and LAN/Online) -->
+                <div id="view-track-select" class="menu-view hidden">
+                    <h3 style="text-align:center;margin-bottom:12px;font-size:16px;letter-spacing:1px">SELECT CIRCUIT</h3>
+                    <div class="track-cards">
+                        <div class="track-card active" data-track="rockport">
+                            <span class="track-emoji">🍂</span>
+                            <div class="track-info">
+                                <strong>Rockport Autumn Highway</strong>
+                                <small>Iconic golden autumn bloom • Suspension bridge • Speed trap</small>
+                            </div>
+                            <span class="diff-badge medium">MEDIUM</span>
+                        </div>
+                        <div class="track-card" data-track="downtown">
+                            <span class="track-emoji">🌃</span>
+                            <div class="track-info">
+                                <strong>Camden Docks & Downtown</strong>
+                                <small>Slick rain-soaked asphalt • Neon reflections • Harbor cranes</small>
+                            </div>
+                            <span class="diff-badge hard">HARD</span>
+                        </div>
+                        <div class="track-card" data-track="canyon">
+                            <span class="track-emoji">🏔️</span>
+                            <div class="track-info">
+                                <strong>Blackwood Canyon Duel</strong>
+                                <small>Canyon cliff pass • Tunnel • Hairpin drift switchbacks</small>
+                            </div>
+                            <span class="diff-badge expert">EXPERT</span>
+                        </div>
+                    </div>
+                    <button class="menu-btn primary-btn" id="btn-track-confirm">
+                        <span class="btn-icon">🏁</span>
+                        <div class="btn-text"><strong>CONFIRM TRACK</strong><small>Build environment and continue</small></div>
+                    </button>
+                    <button class="back-link" id="btn-track-back">← Back to Mode Select</button>
+                </div>
+
+                <!-- Step 1: Mode Select -->
+                <div id="view-mode-select" class="menu-view">
+                    <button class="menu-btn primary-btn" id="btn-select-lan">
+                        <span class="btn-icon">📶</span>
+                        <div class="btn-text">
+                            <strong>LOCAL WI-FI MULTIPLAYER</strong>
+                            <small>Same Wi-Fi network • Offline, no internet needed</small>
+                        </div>
+                    </button>
+
+                    <button class="menu-btn secondary-btn" id="btn-select-online">
+                        <span class="btn-icon">🌐</span>
+                        <div class="btn-text">
+                            <strong>ONLINE MULTIPLAYER</strong>
+                            <small>Connect with room code anywhere over Internet</small>
+                        </div>
+                    </button>
+
+                    <button class="menu-btn tertiary-btn" id="btn-select-solo">
+                        <span class="btn-icon">🏁</span>
+                        <div class="btn-text">
+                            <strong>SINGLE PLAYER PRACTICE</strong>
+                            <small>Solo time-trial with ghost rivals</small>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Step 2A: LAN Menu -->
+                <div id="view-lan" class="menu-view hidden">
+                    <h3>Local Wi-Fi Racing</h3>
+                    <p class="section-desc">Device IP: <b id="lan-my-ip">Detecting...</b></p>
+
+                    <div class="action-box">
+                        <button class="menu-btn host-btn" id="btn-lan-host">CREATE LOCAL ROOM (HOST)</button>
+                    </div>
+
+                    <div class="divider"><span>OR JOIN HOST</span></div>
+
+                    <div class="input-row">
+                        <input type="text" id="lan-ip-input" placeholder="Host IP (e.g. 192.168.1.5)">
+                        <button class="menu-btn join-btn" id="btn-lan-join">JOIN</button>
+                    </div>
+
+                    <button class="back-link" id="btn-lan-back">← Back to Menu</button>
+                </div>
+
+                <!-- Step 2B: Online Menu -->
+                <div id="view-online" class="menu-view hidden">
+                    <h3>Online Multiplayer</h3>
+                    <p class="section-desc">Play across any network with a 6-letter room code</p>
+
+                    <div class="action-box">
+                        <button class="menu-btn host-btn" id="btn-online-host">CREATE ONLINE ROOM</button>
+                    </div>
+
+                    <div class="divider"><span>OR ENTER ROOM CODE</span></div>
+
+                    <div class="input-row">
+                        <input type="text" id="online-code-input" maxlength="8" placeholder="ROOM CODE (e.g. APEX99)">
+                        <button class="menu-btn join-btn" id="btn-online-join">JOIN</button>
+                    </div>
+
+                    <button class="back-link" id="btn-online-back">← Back to Menu</button>
+                </div>
+
+                <!-- Step 3: Room Lobby -->
+                <div id="view-lobby" class="menu-view hidden">
+                    <div class="room-info-bar">
+                        <span id="room-mode-badge" class="mode-tag">LOCAL HOST</span>
+                        <h2 id="room-code-display">ROOM: SPEED1</h2>
+                    </div>
+
+                    <div class="slots-container" id="player-slots-list">
+                        <!-- 4 Player Slots injected via JS -->
+                    </div>
+
+                    <div class="color-picker-row">
+                        <span>SELECT CAR COLOR:</span>
+                        <div class="color-bubbles">
+                            <button class="color-btn active" data-color="0" style="background:#E62020"></button>
+                            <button class="color-btn" data-color="1" style="background:#0088FF"></button>
+                            <button class="color-btn" data-color="2" style="background:#00E040"></button>
+                            <button class="color-btn" data-color="3" style="background:#FFB800"></button>
+                        </div>
+                    </div>
+
+                    <div id="lobby-status-hint" class="status-box hidden" style="margin-top:6px;font-size:12px;"></div>
+                    <div class="lobby-action-buttons">
+                        <button class="menu-btn primary-btn" id="btn-start-race">START RACE</button>
+                        <button class="menu-btn secondary-btn hidden" id="btn-client-solo">START WITH AI RIVALS NOW</button>
+                        <button class="back-link" id="btn-leave-lobby">← Leave Room</button>
+                    </div>
+                </div>
+
+                <div id="menu-status-msg" class="status-box hidden">Connecting...</div>
+            </div>
+        </div>
+
+        <!-- FINISH PODIUM SCREEN -->
+        <div id="finish-screen" class="menu-overlay hidden">
+            <div class="menu-card finish-card">
+                <div class="podium-header">
+                    <h1 id="podium-rank-text">🏆 1ST PLACE!</h1>
+                    <p id="podium-sub-text">Congratulations, Champion!</p>
+                </div>
+
+                <div class="stats-table">
+                    <div class="stat-row">
+                        <span>Total Race Time:</span>
+                        <strong id="stat-total-time">01:42.50</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Best Lap Time:</span>
+                        <strong id="stat-best-lap">00:33.20</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Top Speed Reached:</span>
+                        <strong id="stat-top-speed">198 KM/H</strong>
+                    </div>
+                </div>
+
+                <div class="lobby-action-buttons">
+                    <button class="menu-btn primary-btn" id="btn-finish-restart">RACE AGAIN</button>
+                    <button class="back-link" id="btn-finish-lobby">Return to Lobby</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="three.min.js"></script>
+    <script src="peerjs.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
+
