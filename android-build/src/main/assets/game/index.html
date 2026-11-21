@@ -88,7 +88,11 @@
 
                 <!-- Step 0: Track Select (inserted between mode and LAN/Online) -->
                 <div id="view-track-select" class="menu-view hidden">
-                    <h3 style="text-align:center;margin-bottom:12px;font-size:16px;letter-spacing:1px">SELECT CIRCUIT</h3>
+                    <div class="view-header-bar">
+                        <button class="header-back-btn" id="btn-track-back-top">← BACK</button>
+                        <h3 class="header-title">SELECT CIRCUIT</h3>
+                        <div class="header-spacer"></div>
+                    </div>
                     <div class="track-cards">
                         <div class="track-card active" data-track="rockport">
                             <span class="track-emoji">🍂</span>
@@ -119,7 +123,7 @@
                         <span class="btn-icon">⚡</span>
                         <div class="btn-text"><strong>START RACE ON THIS CIRCUIT</strong><small>Launch high-speed race</small></div>
                     </button>
-                    <button class="back-link" id="btn-track-back">← Back to Main Menu</button>
+                    <button class="menu-btn tertiary-btn back-btn-large" id="btn-track-back">← BACK TO MAIN MENU</button>
                 </div>
 
                 <!-- Step 1: Mode Select -->
@@ -159,7 +163,11 @@
 
                 <!-- Step 2A: LAN Menu -->
                 <div id="view-lan" class="menu-view hidden">
-                    <h3>Local Wi-Fi Racing</h3>
+                    <div class="view-header-bar">
+                        <button class="header-back-btn" id="btn-lan-back-top">← BACK</button>
+                        <h3 class="header-title">LOCAL WI-FI RACING</h3>
+                        <div class="header-spacer"></div>
+                    </div>
                     <p class="section-desc">Device IP: <b id="lan-my-ip">Detecting...</b></p>
 
                     <div class="action-box">
@@ -173,12 +181,16 @@
                         <button class="menu-btn join-btn" id="btn-lan-join">JOIN</button>
                     </div>
 
-                    <button class="back-link" id="btn-lan-back">← Back to Menu</button>
+                    <button class="menu-btn tertiary-btn back-btn-large" id="btn-lan-back">← BACK TO MAIN MENU</button>
                 </div>
 
                 <!-- Step 2B: Online Menu -->
                 <div id="view-online" class="menu-view hidden">
-                    <h3>Online Multiplayer</h3>
+                    <div class="view-header-bar">
+                        <button class="header-back-btn" id="btn-online-back-top">← BACK</button>
+                        <h3 class="header-title">ONLINE MULTIPLAYER</h3>
+                        <div class="header-spacer"></div>
+                    </div>
                     <p class="section-desc">Play across any network with a 6-letter room code</p>
 
                     <div class="action-box">
@@ -192,14 +204,19 @@
                         <button class="menu-btn join-btn" id="btn-online-join">JOIN</button>
                     </div>
 
-                    <button class="back-link" id="btn-online-back">← Back to Menu</button>
+                    <button class="menu-btn tertiary-btn back-btn-large" id="btn-online-back">← BACK TO MAIN MENU</button>
                 </div>
 
                 <!-- Step 3: Room Lobby -->
                 <div id="view-lobby" class="menu-view hidden">
+                    <div class="view-header-bar">
+                        <button class="header-back-btn" id="btn-lobby-back-top">← LEAVE</button>
+                        <h3 class="header-title" id="room-code-display">ROOM: SPEED1</h3>
+                        <div class="header-spacer"></div>
+                    </div>
                     <div class="room-info-bar">
                         <span id="room-mode-badge" class="mode-tag">LOCAL HOST</span>
-                        <h2 id="room-code-display">ROOM: SPEED1</h2>
+                        <span>4 Racers Max</span>
                     </div>
 
                     <div class="slots-container" id="player-slots-list">
@@ -220,7 +237,7 @@
                     <div class="lobby-action-buttons">
                         <button class="menu-btn primary-btn" id="btn-start-race">START RACE</button>
                         <button class="menu-btn secondary-btn hidden" id="btn-client-solo">START WITH AI RIVALS NOW</button>
-                        <button class="back-link" id="btn-leave-lobby">← Leave Room</button>
+                        <button class="menu-btn tertiary-btn back-btn-large" id="btn-leave-lobby">← LEAVE LOBBY</button>
                     </div>
                 </div>
 

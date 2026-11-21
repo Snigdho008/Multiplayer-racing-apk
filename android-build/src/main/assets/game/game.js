@@ -1632,9 +1632,21 @@
             launchRace();
         });
 
-        addTapListener('btn-track-back',  () => showView(viewTrack, viewMode));
-        addTapListener('btn-lan-back',    () => showView(viewLan, viewMode));
-        addTapListener('btn-online-back', () => showView(viewOnline, viewMode));
+        // Top & Bottom Back Buttons (Track Select)
+        addTapListener('btn-track-back',     () => showView(viewTrack, viewMode));
+        addTapListener('btn-track-back-top', () => showView(viewTrack, viewMode));
+
+        // Top & Bottom Back Buttons (LAN)
+        addTapListener('btn-lan-back',     () => showView(viewLan, viewMode));
+        addTapListener('btn-lan-back-top', () => showView(viewLan, viewMode));
+
+        // Top & Bottom Back Buttons (Online)
+        addTapListener('btn-online-back',     () => showView(viewOnline, viewMode));
+        addTapListener('btn-online-back-top', () => showView(viewOnline, viewMode));
+
+        // Top & Bottom Leave Buttons (Lobby)
+        addTapListener('btn-leave-lobby',     () => showView(viewLobby, viewMode));
+        addTapListener('btn-lobby-back-top',  () => showView(viewLobby, viewMode));
 
         addTapListener('btn-lan-host', () => {
             netMode = 'LAN'; isHost = true; myPlayerIndex = 0;
@@ -1691,6 +1703,27 @@
         if (hideEl) hideEl.classList.add('hidden');
         if (showEl) showEl.classList.remove('hidden');
     }
+
+    // Android Physical & Gesture Back Handler
+    window.handleAndroidBack = function() {
+        const viewTrack  = document.getElementById('view-track-select');
+        const viewLan    = document.getElementById('view-lan');
+        const viewOnline = document.getElementById('view-online');
+        const viewLobby  = document.getElementById('view-lobby');
+        const viewMode   = document.getElementById('view-mode-select');
+
+        if (viewTrack && !viewTrack.classList.contains('hidden')) {
+            showView(viewTrack, viewMode);
+        } else if (viewLan && !viewLan.classList.contains('hidden')) {
+            showView(viewLan, viewMode);
+        } else if (viewOnline && !viewOnline.classList.contains('hidden')) {
+            showView(viewOnline, viewMode);
+        } else if (viewLobby && !viewLobby.classList.contains('hidden')) {
+            showView(viewLobby, viewMode);
+        } else if (window.AndroidNative?.exitApp) {
+            window.AndroidNative.exitApp();
+        }
+    };
 
     function setupHostPeer(roomCode, modeBadge) {
         document.getElementById('view-lan').classList.add('hidden');
